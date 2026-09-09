@@ -1,0 +1,723 @@
+/* ── Brand Atelier · tokens ─────────────────────────────────────────
+   Palette is taken from the logo. There is no chromatic accent:
+   the accent is light. See SPEC.md §2.1.                            */
+:root {
+  --ground:     #0A0B0C;
+  --surface:    #131519;
+  --graphite:   #1E2226;
+  --steel:      #2A3138;
+  --cool-mid:   #767F87;  /* 4.84:1 — passes AA at the 10-11px label sizes */
+  --cool-light: #A8B0B6;  /* 9.5:1 — body copy */
+  --cream:      #F2F0EC;  /* 17.8:1 */
+
+  /* SPEC.md §2.3 — nothing bounces. */
+  --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-move: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--cool-light);
+  font-family: var(--font-jost), Futura, "Avenir Next", -apple-system, "Segoe UI", sans-serif;
+  font-weight: 300;
+  font-size: 1rem;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Global film grain — SPEC.md §3 "Global · Grain". Static by design. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+:focus-visible {
+  outline: 1px solid var(--cream);
+  outline-offset: 3px;
+}
+
+/* ── Hero ───────────────────────────────────────────────────────── */
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(24px, 6vw, 88px);
+  padding-block: clamp(96px, 14vh, 160px);
+  isolation: isolate;
+}
+
+/* Canvas / fallback both sit behind the type, never above it. */
+.hero__scene {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.hero__scene canvas,
+.hero__scene svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hero__inner {
+  position: relative;
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.hero__eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--cool-mid);
+  margin: 0 0 clamp(20px, 3vw, 34px);
+}
+
+.hero__title {
+  font-family: var(--font-bodoni), Didot, "Bodoni MT", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(2.5rem, 8vw, 6rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  color: var(--cream);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* Mask reveal. The resting state in this stylesheet is VISIBLE — the
+   animation runs from hidden to visible with `backwards` fill, so if it
+   never runs (reduced motion, CSS animation unsupported) the content is
+   simply there. Nothing is ever parked at opacity 0 waiting on JS.
+   SPEC.md §6.                                                        */
+.hero__line {
+  display: block;
+  overflow: hidden;
+}
+.hero__line > span {
+  display: block;
+  animation: mask-up 1000ms var(--ease-out) backwards;
+}
+.hero__line:nth-of-type(1) > span { animation-delay: 1200ms; }
+.hero__line:nth-of-type(2) > span { animation-delay: 1290ms; } /* 90ms stagger */
+
+@keyframes mask-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.hero__sub {
+  margin: clamp(22px, 3vw, 34px) 0 0;
+  max-width: 34ch;
+  text-wrap: pretty;
+  font-size: clamp(1rem, 1.6vw, 1.125rem);
+  color: var(--cool-light);
+  animation: fade-up 600ms var(--ease-out) backwards;
+  animation-delay: 4400ms;
+}
+
+.hero__cue {
+  position: absolute;
+  left: clamp(24px, 6vw, 88px);
+  bottom: clamp(24px, 5vh, 52px);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.625rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--cool-mid);
+  animation: fade-up 600ms var(--ease-out) backwards;
+  animation-delay: 4400ms;
+}
+.hero__cue::after {
+  content: "";
+  width: 44px;
+  height: 1px;
+  background: var(--steel);
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────────
+   Every reveal is removed, not shortened. Content sits at its resting
+   state, which is visible. The canvas is never mounted (see Hero.tsx),
+   so the Three.js chunk is never fetched.                            */
+@media (prefers-reduced-motion: reduce) {
+  .hero__line > span,
+  .hero__sub,
+  .hero__cue {
+    animation: none;
+  }
+}
+
+/* ── Lenis ──────────────────────────────────────────────────────────
+   Only these three rules are needed; the rest of Lenis' stylesheet is
+   for horizontal and nested scrollers we don't have.                 */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* ── Reveal primitive ───────────────────────────────────────────────
+   Opt-IN. Everything below is inert until ScrollSpine adds `js-reveal`
+   to <html>, which it only does when JS ran and motion is wanted. With
+   no JS, or under reduced motion, content is at its resting state:
+   visible. Nothing is ever parked hidden waiting on an observer.
+   SPEC.md §6.                                                        */
+[data-reveal] > span { display: block; }
+
+.js-reveal [data-reveal] {
+  display: block;
+  overflow: hidden;
+}
+.js-reveal [data-reveal] > span {
+  transform: translateY(100%);
+  opacity: 0;
+  transition:
+    transform 900ms var(--ease-out),
+    opacity 900ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * var(--stagger, 90ms));
+}
+.js-reveal [data-reveal].is-in > span {
+  transform: none;
+  opacity: 1;
+}
+
+/* ── Section system ─────────────────────────────────────────────── */
+.section {
+  position: relative;
+  padding: clamp(120px, 22vh, 220px) clamp(24px, 6vw, 88px);
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.label {
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--cool-mid);
+  margin: 0 0 clamp(28px, 5vw, 52px);
+}
+
+.statement {
+  font-family: var(--font-bodoni), Didot, "Bodoni MT", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(2rem, 6.2vw, 4.25rem);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  color: var(--cream);
+  margin: 0;
+  max-width: 20ch;           /* SPEC.md §3 — the serif line is capped at 20ch */
+}
+.statement .line--lead { color: var(--cream); }
+
+.prop__body {
+  margin-top: clamp(40px, 7vw, 76px);
+  display: grid;
+  gap: 20px;
+  max-width: 54ch;
+}
+.prop__body p { margin: 0; }
+
+/* ── S7 · Close ─────────────────────────────────────────────────── */
+.close {
+  min-height: 80svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.statement--center { max-width: 18ch; }
+
+.close__dot {
+  display: block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--cream);
+  margin-bottom: clamp(40px, 7vw, 72px);
+}
+
+.close__contact {
+  margin: clamp(44px, 7vw, 80px) 0 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+/* Underline draws from the left on hover — SPEC.md §3 S7. */
+.draw {
+  position: relative;
+  color: var(--cool-light);
+  text-decoration: none;
+  transition: color 400ms var(--ease-move);
+}
+.draw::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 400ms var(--ease-move);
+}
+.draw:hover, .draw:focus-visible { color: var(--cream); }
+.draw:hover::after, .draw:focus-visible::after { transform: scaleX(1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .draw, .draw::after { transition: none; }
+  .draw::after { transform: scaleX(1); }
+}
+
+/* Canvas fades out across the first 60vh of scroll — SPEC.md §3 "Exit".
+   Scroll-driven CSS, no JS. Browsers without support simply keep the canvas
+   at full opacity while it scrolls out of frame, which is harmless: the rAF
+   loop still stops on its own via IntersectionObserver in PointField.tsx. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__scene {
+      animation: hero-fade linear both;
+      animation-timeline: scroll();
+      animation-range: 0 60vh;
+    }
+    @keyframes hero-fade {
+      to { opacity: 0; }
+    }
+  }
+}
+
+/* ── Reveal variants ────────────────────────────────────────────────
+   Declared after the base rule: same specificity, source order wins.  */
+
+/* Hairline draws left to right — SPEC.md §3 S4, 1200ms. */
+.js-reveal [data-reveal="rule"] > span {
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 1;
+  transition: transform 1200ms var(--ease-move);
+  transition-delay: calc(var(--i, 0) * var(--stagger, 90ms));
+}
+.js-reveal [data-reveal="rule"].is-in > span { transform: none; }
+
+/* Body copy fades, no travel — SPEC.md §3 S4, 700ms. */
+.js-reveal [data-reveal="fade"] > span {
+  transform: none;
+  opacity: 0;
+  transition: opacity 700ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * var(--stagger, 90ms));
+}
+.js-reveal [data-reveal="fade"].is-in > span { opacity: 1; }
+
+/* ── S4 · The Offer ─────────────────────────────────────────────── */
+.offer { --stagger: 120ms; }
+
+.offer__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: clamp(56px, 9vw, 80px);
+}
+@media (min-width: 860px) {
+  .offer__list {
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(32px, 4vw, 64px);
+  }
+}
+
+.offer__item { display: grid; gap: 0; }
+
+.offer__rule { display: block; }
+.offer__rule > span {
+  display: block;
+  height: 1px;
+  background: var(--steel);
+}
+
+.offer__head {
+  font-family: var(--font-bodoni), Didot, "Bodoni MT", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(1.75rem, 3.4vw, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--cream);
+  margin: clamp(22px, 3vw, 32px) 0 0;
+}
+
+.offer__num {
+  display: block;
+  font-family: var(--font-jost), Futura, "Avenir Next", sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  color: var(--cool-mid);
+  margin-bottom: clamp(14px, 2vw, 20px);
+  font-variant-numeric: tabular-nums;
+}
+
+.offer__body {
+  margin: clamp(16px, 2vw, 22px) 0 0;
+  max-width: 38ch;
+  color: var(--cool-light);
+}
+
+.offer__note {
+  margin: clamp(64px, 10vw, 108px) 0 0;
+  padding-top: clamp(28px, 4vw, 40px);
+  /* The rule spans the full grid — constrained to the text measure it read
+     as a stray line under the first column rather than a divider. */
+  border-top: 1px solid var(--graphite);
+  max-width: none;
+  font-style: italic;
+  color: var(--cool-mid);
+}
+.offer__note > span { max-width: 52ch; }
+
+/* Whole block fades once, opacity only — SPEC.md §3 S3. No stagger, by
+   agreement: that section informs, it should not perform. */
+.js-reveal [data-reveal="block"] > span {
+  transform: none;
+  opacity: 0;
+  transition: opacity 500ms var(--ease-out);
+  transition-delay: 0ms;
+}
+.js-reveal [data-reveal="block"].is-in > span { opacity: 1; }
+
+/* Portrait frame opens from the bottom while the image releases from 1.06 —
+   the photograph settles rather than slides. SPEC.md §3 S6. */
+.js-reveal [data-reveal="clip"] > span {
+  transform: none;
+  opacity: 1;
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 1100ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * var(--stagger, 90ms));
+}
+.js-reveal [data-reveal="clip"].is-in > span { clip-path: inset(0 0 0 0); }
+.js-reveal [data-reveal="clip"] img {
+  transform: scale(1.06);
+  transition: transform 1100ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * var(--stagger, 90ms));
+}
+.js-reveal [data-reveal="clip"].is-in img { transform: none; }
+
+/* ── S3 · What is brand positioning ─────────────────────────────── */
+.positioning__lead {
+  font-family: var(--font-bodoni), Didot, "Bodoni MT", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(1.75rem, 4.4vw, 3rem);
+  line-height: 1.12;
+  letter-spacing: -0.012em;
+  color: var(--cream);
+  margin: 0;
+  max-width: 24ch;
+  text-wrap: balance;
+}
+
+.positioning__cols {
+  margin-top: clamp(36px, 5vw, 56px);
+  display: grid;
+  gap: 20px;
+  max-width: 68ch;
+}
+@media (min-width: 860px) {
+  .positioning__cols { grid-template-columns: 1fr 1fr; gap: 40px; max-width: none; }
+}
+.positioning__cols p { margin: 0; max-width: 46ch; }
+
+.positioning__kicker {
+  margin: clamp(48px, 7vw, 76px) 0 0;
+  font-size: 0.6875rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--cool-mid);
+}
+
+.positioning__list {
+  list-style: none;
+  margin: clamp(20px, 3vw, 28px) 0 0;
+  padding: 0;
+  max-width: 62ch;
+}
+.positioning__list li {
+  padding: 16px 0;
+  border-top: 1px solid var(--graphite);
+  color: var(--cool-light);
+}
+.positioning__list li:last-child { border-bottom: 1px solid var(--graphite); }
+.positioning__list b { color: var(--cream); font-weight: 400; }
+
+/* ── S6 · Founders ──────────────────────────────────────────────── */
+.founders { --stagger: 150ms; }
+
+.founders__grid {
+  display: grid;
+  gap: clamp(72px, 11vw, 104px);
+}
+@media (min-width: 860px) {
+  .founders__grid { grid-template-columns: 1fr 1fr; gap: clamp(40px, 5vw, 72px); }
+}
+
+.founder__media { display: block; }
+.founder__media > span {
+  display: block;
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--surface);
+}
+.founder__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  will-change: transform;
+}
+/* The portraits are already monochrome; this only casts them cold so they
+   belong to the palette rather than reading as neutral grey. Adjust opacity
+   to taste — 0 removes the cast entirely. */
+.founder__media > span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--steel);
+  mix-blend-mode: color;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.founder__name {
+  font-family: var(--font-bodoni), Didot, "Bodoni MT", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(1.5rem, 2.8vw, 2rem);
+  line-height: 1.15;
+  color: var(--cream);
+  margin: clamp(26px, 3.5vw, 36px) 0 0;
+}
+.founder__role {
+  display: block;
+  font-family: var(--font-jost), Futura, "Avenir Next", sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--cool-mid);
+  margin-top: 12px;
+}
+
+.founder__bio { margin-top: clamp(22px, 3vw, 30px); }
+.founder__bio p { margin: 0 0 14px; max-width: 46ch; }
+.founder__bio p:last-child { margin-bottom: 0; }
+.founder__pull {
+  margin-top: 22px !important;
+  padding-top: 18px;
+  border-top: 1px solid var(--graphite);
+  color: var(--cream);
+  font-style: italic;
+}
+
+/* ── S5 · Proof (CMS) ───────────────────────────────────────────── */
+.proof { --stagger: 120ms; }
+
+.proof__cases {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  /* Mobile: a native scroll strip with snap — no JS carousel. */
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 78%;
+  gap: clamp(20px, 5vw, 32px);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  padding-bottom: 8px;
+}
+.proof__cases::-webkit-scrollbar { display: none; }
+.proof__case { scroll-snap-align: start; }
+
+@media (min-width: 860px) {
+  .proof__cases {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-columns: auto;
+    overflow-x: visible;
+    gap: clamp(32px, 4vw, 56px) clamp(24px, 3vw, 40px);
+  }
+}
+
+.proof__media { display: block; }
+.proof__media > span {
+  display: block;
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--surface);
+}
+.proof__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.proof__title {
+  font-family: var(--font-bodoni), Didot, "Bodoni MT", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+  line-height: 1.2;
+  color: var(--cream);
+  margin: clamp(18px, 2.4vw, 26px) 0 0;
+}
+.proof__meta {
+  display: block;
+  font-family: var(--font-jost), Futura, "Avenir Next", sans-serif;
+  font-size: 0.6875rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--cool-mid);
+  margin-top: 10px;
+}
+.proof__summary { margin: 14px 0 0; max-width: 42ch; font-size: 0.9375rem; }
+
+.proof__quotes {
+  margin-top: clamp(72px, 11vw, 120px);
+  display: grid;
+  gap: clamp(40px, 6vw, 64px);
+}
+@media (min-width: 860px) {
+  .proof__quotes { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+}
+.proof__quote { margin: 0; padding-top: clamp(22px, 3vw, 30px); border-top: 1px solid var(--graphite); }
+.proof__quote p {
+  font-family: var(--font-bodoni), Didot, "Bodoni MT", Georgia, serif;
+  font-size: clamp(1.125rem, 1.9vw, 1.375rem);
+  line-height: 1.4;
+  color: var(--cream);
+  margin: 0;
+  max-width: 34ch;
+}
+.proof__quote cite {
+  display: block;
+  margin-top: 18px;
+  font-style: normal;
+  font-size: 0.6875rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--cool-light);
+}
+.proof__quote cite span { display: block; color: var(--cool-mid); margin-top: 6px; }
+
+.proof__clients { margin-top: clamp(64px, 9vw, 100px); }
+.proof__clients ul {
+  list-style: none;
+  margin: 0;
+  padding: clamp(28px, 4vw, 40px) 0 0;
+  border-top: 1px solid var(--graphite);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(28px, 5vw, 56px);
+}
+.proof__clients li {
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cool-mid);
+}
+/* Logos stay quiet: greyscale, no hover, no animation — SPEC.md §3 S5. */
+.proof__clients img {
+  display: block;
+  height: clamp(20px, 2.4vw, 28px);
+  width: auto;
+  filter: grayscale(1) brightness(1.7);
+  opacity: 0.72;
+}
+
+/* ── Masthead ───────────────────────────────────────────────────────
+   Type-set stand-in for the AB lockup until the vector lands. Metrics
+   follow the logo: high-contrast serif monogram over a light geometric
+   sans at wide tracking. */
+.masthead {
+  position: absolute;
+  top: clamp(24px, 5vh, 52px);
+  left: clamp(24px, 6vw, 88px);
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  animation: fade-up 600ms var(--ease-out) backwards;
+  animation-delay: 300ms;
+}
+.masthead__mark {
+  display: block;
+  height: clamp(20px, 2.2vw, 26px);
+  width: auto;
+}
+.masthead__word {
+  font-size: 0.625rem;
+  font-weight: 400;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--cool-mid);
+}
+@media (prefers-reduced-motion: reduce) { .masthead { animation: none; } }
+
+/* ── S2 · The photograph ────────────────────────────────────────── */
+.prop__media {
+  display: block;
+  margin: clamp(48px, 7vw, 88px) 0 0;
+}
+.prop__media > span {
+  display: block;
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--surface);
+}
+.prop__media img {
+  display: block;
+  width: 100%;
+  /* Oversized so the parallax travel never exposes an edge. */
+  height: 112%;
+  object-fit: cover;
+  position: absolute;
+  top: -6%;
+  left: 0;
+}
+
+/* Scroll-driven parallax — SPEC.md §3 S2, 12% of the section height.
+   Pure CSS; browsers without scroll timelines simply get a still image. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .prop__media img {
+      animation: prop-parallax linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+    @keyframes prop-parallax {
+      from { transform: translateY(-6%); }
+      to   { transform: translateY(6%); }
+    }
+  }
+}
