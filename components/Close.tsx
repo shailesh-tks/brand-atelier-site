@@ -1,3 +1,5 @@
+import { site } from "@/lib/site";
+
 /** S7 · Close — SPEC.md §3. */
 export default function Close() {
   return (
@@ -16,8 +18,8 @@ export default function Close() {
 
       <p className="close__contact" data-reveal style={{ "--i": 2 } as React.CSSProperties}>
         <span>
-          <a className="draw" href="mailto:hello@thebrandatelier.com">
-            hello@thebrandatelier.com
+          <a className="draw" href={`mailto:${site.email}`}>
+            {site.email}
           </a>
         </span>
       </p>
