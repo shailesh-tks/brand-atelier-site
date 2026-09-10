@@ -30,7 +30,8 @@ jobs:
           # Project Pages are served from /<repo>, so assets need the prefix.
           PAGES_BASE_PATH: /${{ github.event.repository.name }}
           NEXT_PUBLIC_SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
-        run: npm run build
+        # build:next, not build — the latter is a no-op when out/ is committed.
+        run: npm run build:next
       # Pages otherwise runs the output through Jekyll, which drops _next/.
       - run: touch out/.nojekyll
       - uses: actions/configure-pages@v5

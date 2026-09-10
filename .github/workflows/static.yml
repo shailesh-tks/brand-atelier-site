@@ -32,7 +32,8 @@ jobs:
           STATIC_EXPORT: "1"
           NEXT_TELEMETRY_DISABLED: "1"
           NEXT_PUBLIC_SITE_URL: https://thebrandatelier.co.in
-        run: npm run build
+        # build:next, not build — the latter is a no-op when out/ is committed.
+        run: npm run build:next
 
       - name: Commit the export if it changed
         run: |

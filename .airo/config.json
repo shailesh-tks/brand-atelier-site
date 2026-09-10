@@ -1,5 +1,0 @@
-{
-  "buildCommand": "echo 'No build on host: serving the committed static export from out/'",
-  "serveCommand": "node server.mjs",
-  "packageManager": ""
-}
