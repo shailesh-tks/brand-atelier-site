@@ -2,7 +2,7 @@
 export const site = {
   // Set NEXT_PUBLIC_SITE_URL once the domain is pointed. Metadata, the sitemap
   // and the structured data all read from here.
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://brandatelier.example",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://thebrandatelier.co.in",
   name: "Brand Atelier",
   legalName: "The Brand Atelier",
   tagline: "Brands. Positioned to Lead.",

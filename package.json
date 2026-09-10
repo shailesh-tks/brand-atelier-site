@@ -4,8 +4,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "postbuild": "cp deploy/htaccess out/.htaccess 2>/dev/null || true"
+    "start": "next start"
   },
   "dependencies": {
     "@sanity/image-url": "^2.1.1",
