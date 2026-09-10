@@ -35,6 +35,8 @@ jobs:
         # build:next, not build — the latter is a no-op when out/ is committed.
         run: npm run build:next
 
+      # Another push can land between checkout and commit; rebase rather than
+      # fail, since this job's only output is a rebuild of out/.
       - name: Commit the export if it changed
         run: |
           git config user.name  "github-actions[bot]"
@@ -44,5 +46,6 @@ jobs:
             echo "Export unchanged — nothing to commit."
           else
             git commit -m "Build static export [skip ci]"
+            git pull --rebase --strategy-option=ours origin main
             git push
           fi
