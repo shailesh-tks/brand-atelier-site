@@ -664,22 +664,14 @@ html.lenis, html.lenis body { height: auto; }
   z-index: 50;
   margin: 0;
   display: flex;
-  align-items: center;
-  gap: clamp(10px, 1.4vw, 18px);
   pointer-events: none;
   animation: fade-up 600ms var(--ease-out) backwards;
   animation-delay: 300ms;
 }
-.masthead__mark {
+.masthead__logo {
   display: block;
-  height: clamp(19px, 2.1vw, 25px);
-  width: auto;
-}
-.masthead__word {
-  display: block;
-  height: clamp(7px, 0.78vw, 9px);
-  width: auto;
-  opacity: 0.78;
+  width: clamp(104px, 10.5vw, 144px);
+  height: auto;
 }
 /* A fixed mark over scrolling text needs separation or the two collide.
    A soft scrim from the ground colour keeps the lockup legible without
