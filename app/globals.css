@@ -668,9 +668,7 @@ html.lenis, html.lenis body { height: auto; }
 }
 .masthead__logo {
   display: block;
-  /* The tagline is 5% of the lockup's height, so the whole mark has to stay
-     reasonably large for it to hold together at all. */
-  width: clamp(128px, 13vw, 150px);
+  width: clamp(118px, 12vw, 146px);
   height: auto;
 }
 /* A fixed mark over scrolling text needs separation or the two collide.
@@ -680,7 +678,7 @@ html.lenis, html.lenis body { height: auto; }
   content: "";
   position: fixed;
   inset: 0 0 auto 0;
-  height: clamp(132px, 17vh, 184px);
+  height: clamp(98px, 13vh, 138px);
   z-index: -1;
   pointer-events: none;
   background: linear-gradient(
