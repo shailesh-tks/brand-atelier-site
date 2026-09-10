@@ -41,18 +41,9 @@ export default function Founders() {
                 the bottom while the image releases from a 1.06 scale. */}
             <span className="founder__media" data-reveal="clip" style={{ "--i": 0 } as CSSProperties}>
               <span>
-                {/* Native <picture>. next/image cost 5KB of critical JS to
-                    resize two portraits that never change; these are sized
-                    once at build instead. */}
-                <picture>
-                  <source
-                    type="image/webp"
-                    sizes="(min-width: 860px) 44vw, 92vw"
+                <img
+                    src={asset(`/portraits/${f.slug}-1086.webp`)}
                     srcSet={`${asset(`/portraits/${f.slug}-600.webp`)} 600w, ${asset(`/portraits/${f.slug}-860.webp`)} 860w, ${asset(`/portraits/${f.slug}-1086.webp`)} 1086w`}
-                  />
-                  <img
-                    src={asset(`/portraits/${f.slug}-1086.jpg`)}
-                    srcSet={`${asset(`/portraits/${f.slug}-600.jpg`)} 600w, ${asset(`/portraits/${f.slug}-860.jpg`)} 860w, ${asset(`/portraits/${f.slug}-1086.jpg`)} 1086w`}
                     sizes="(min-width: 860px) 44vw, 92vw"
                     width={1086}
                     height={1448}
@@ -60,7 +51,6 @@ export default function Founders() {
                     decoding="async"
                     alt={`${f.name}, ${f.role} of Brand Atelier`}
                   />
-                </picture>
               </span>
             </span>
 

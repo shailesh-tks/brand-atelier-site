@@ -1,0 +1,5 @@
+{
+  "buildCommand": "NODE_OPTIONS='--max-old-space-size=512' NEXT_TELEMETRY_DISABLED=1 NODE_ENV=production npm run build",
+  "serveCommand": "NEXT_TELEMETRY_DISABLED=1 NODE_ENV=production npm start",
+  "packageManager": ""
+}

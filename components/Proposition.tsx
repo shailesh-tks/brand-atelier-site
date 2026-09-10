@@ -26,15 +26,9 @@ export default function Proposition() {
           because it *is* the claim. */}
       <figure className="prop__media" data-reveal="clip" style={{ "--i": 3 } as CSSProperties}>
         <span>
-          <picture>
-            <source
-              type="image/webp"
-              sizes="(min-width: 1280px) 1200px, 92vw"
+          <img
+              src={asset("/work/positioning-1400.webp")}
               srcSet={`${asset("/work/positioning-900.webp")} 900w, ${asset("/work/positioning-1400.webp")} 1400w, ${asset("/work/positioning-1920.webp")} 1920w`}
-            />
-            <img
-              src={asset("/work/positioning-1400.jpg")}
-              srcSet={`${asset("/work/positioning-900.jpg")} 900w, ${asset("/work/positioning-1400.jpg")} 1400w, ${asset("/work/positioning-1920.jpg")} 1920w`}
               sizes="(min-width: 1280px) 1200px, 92vw"
               width={1536}
               height={1024}
@@ -42,7 +36,6 @@ export default function Proposition() {
               decoding="async"
               alt="A single gold king standing among identical dark pawns."
             />
-          </picture>
         </span>
       </figure>
 
