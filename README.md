@@ -34,8 +34,18 @@ All copy lives in the components. Design tokens are at the top of
 ## Content management
 
 Sanity is optional. Without `NEXT_PUBLIC_SANITY_PROJECT_ID` the queries return
-empty, the Proof section doesn't render, and `/studio` shows setup instructions.
-Copy `.env.example` to `.env.local` to connect it.
+empty and the Proof section doesn't render. Copy `.env.example` to `.env.local`
+to connect it.
+
+The editing studio is **not** embedded in this app. `next-sanity` drags the
+whole studio toolchain in as a dependency — 113MB of `node_modules` and a 288MB
+build — for what is, at read time, a GET request with a GROQ query string.
+`lib/sanity.ts` calls the HTTP API with plain `fetch` instead, so Next's own
+cache handles revalidation and the app carries no Sanity dependency at all.
+
+Use Sanity's free hosted studio for editing. The content model lives in
+`sanity/schemas/index.ts` — copy those definitions into a studio project and
+run `npx sanity deploy`, which publishes it at `<project>.sanity.studio`.
 
 ## Deploying
 

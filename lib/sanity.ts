@@ -1,27 +1,46 @@
-import { createClient } from "next-sanity";
-import imageUrlBuilder from "@sanity/image-url";
 import { projectId, dataset, apiVersion, configured } from "@/sanity/env";
 
-export const sanity = configured
-  ? createClient({ projectId, dataset, apiVersion, useCdn: true })
-  : null;
+/**
+ * Sanity content, fetched over its HTTP API with no client library.
+ *
+ * `next-sanity` pulls in the whole studio toolchain — 113MB of node_modules
+ * for what is, at read time, a GET request with a GROQ query string. Plain
+ * fetch also lets Next's own cache handle revalidation directly.
+ */
 
-const builder = sanity ? imageUrlBuilder(sanity) : null;
-
-export function urlFor(source: unknown, width: number) {
-  if (!builder || !source) return null;
-  return builder.image(source as never).width(width).fit("max").auto("format").url();
-}
-
-/** Every query returns empty when Sanity isn't configured, so S5 just doesn't render. */
+/** Every query returns empty when Sanity isn't configured, so S5 doesn't render. */
 async function query<T>(groq: string): Promise<T[]> {
-  if (!sanity) return [];
+  if (!configured) return [];
+  const url =
+    `https://${projectId}.apicdn.sanity.io/v${apiVersion}/data/query/${dataset}` +
+    `?query=${encodeURIComponent(groq)}`;
   try {
-    return await sanity.fetch<T[]>(groq, {}, { next: { revalidate: 60 } });
+    const res = await fetch(url, { next: { revalidate: 60 } });
+    if (!res.ok) return [];
+    const body = (await res.json()) as { result?: T[] };
+    return body.result ?? [];
   } catch {
     // A CMS outage must never take the marketing page down with it.
     return [];
   }
+}
+
+/**
+ * Sanity image refs are deterministic:
+ *   image-<assetId>-<width>x<height>-<ext>
+ * so a CDN URL can be assembled without @sanity/image-url.
+ */
+export function urlFor(source: unknown, width: number): string | null {
+  if (!configured) return null;
+  const ref = (source as { asset?: { _ref?: string } } | undefined)?.asset?._ref;
+  if (!ref) return null;
+  const m = /^image-([a-f0-9]+)-(\d+x\d+)-(\w+)$/.exec(ref);
+  if (!m) return null;
+  const [, assetId, dimensions, ext] = m;
+  return (
+    `https://cdn.sanity.io/images/${projectId}/${dataset}/` +
+    `${assetId}-${dimensions}.${ext}?w=${width}&fit=max&auto=format`
+  );
 }
 
 export type CaseStudy = {

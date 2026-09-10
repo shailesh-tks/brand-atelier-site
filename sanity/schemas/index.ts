@@ -1,4 +1,14 @@
-import type { SchemaTypeDefinition } from "sanity";
+/**
+ * Content model for Brand Atelier.
+ *
+ * The studio is no longer embedded in this app — it lives at Sanity's own
+ * hosted studio, so these definitions are the source of truth to copy into
+ * that studio project. They are plain objects on purpose: importing types
+ * from `sanity` would drag the whole studio toolchain back into the build.
+ */
+
+type Rule = { required: () => unknown };
+type SchemaTypeDefinition = Record<string, unknown>;
 
 const image = (name = "image", title = "Image") => ({
   name,
@@ -15,8 +25,8 @@ const caseStudy: SchemaTypeDefinition = {
   title: "Case study",
   type: "document",
   fields: [
-    { name: "title", title: "Title", type: "string", validation: (r: any) => r.required() },
-    { name: "slug", title: "Slug", type: "slug", options: { source: "title" }, validation: (r: any) => r.required() },
+    { name: "title", title: "Title", type: "string", validation: (r: Rule) => r.required() },
+    { name: "slug", title: "Slug", type: "slug", options: { source: "title" }, validation: (r: Rule) => r.required() },
     { name: "client", title: "Client", type: "string" },
     { name: "sector", title: "Sector", type: "string" },
     { name: "year", title: "Year", type: "number" },
@@ -32,7 +42,7 @@ const client: SchemaTypeDefinition = {
   title: "Client logo",
   type: "document",
   fields: [
-    { name: "name", title: "Name", type: "string", validation: (r: any) => r.required() },
+    { name: "name", title: "Name", type: "string", validation: (r: Rule) => r.required() },
     image("logo", "Logo"),
     { name: "order", title: "Order", type: "number" },
   ],
@@ -44,8 +54,8 @@ const testimonial: SchemaTypeDefinition = {
   title: "Testimonial",
   type: "document",
   fields: [
-    { name: "quote", title: "Quote", type: "text", rows: 4, validation: (r: any) => r.required() },
-    { name: "author", title: "Author", type: "string", validation: (r: any) => r.required() },
+    { name: "quote", title: "Quote", type: "text", rows: 4, validation: (r: Rule) => r.required() },
+    { name: "author", title: "Author", type: "string", validation: (r: Rule) => r.required() },
     { name: "role", title: "Role and company", type: "string" },
     { name: "order", title: "Order", type: "number" },
   ],
@@ -57,9 +67,9 @@ const journalPost: SchemaTypeDefinition = {
   title: "Journal post",
   type: "document",
   fields: [
-    { name: "title", title: "Title", type: "string", validation: (r: any) => r.required() },
-    { name: "slug", title: "Slug", type: "slug", options: { source: "title" }, validation: (r: any) => r.required() },
-    { name: "publishedAt", title: "Published", type: "datetime", validation: (r: any) => r.required() },
+    { name: "title", title: "Title", type: "string", validation: (r: Rule) => r.required() },
+    { name: "slug", title: "Slug", type: "slug", options: { source: "title" }, validation: (r: Rule) => r.required() },
+    { name: "publishedAt", title: "Published", type: "datetime", validation: (r: Rule) => r.required() },
     { name: "excerpt", title: "Excerpt", type: "text", rows: 3 },
     image("cover", "Cover image"),
     { name: "body", title: "Body", type: "array", of: [{ type: "block" }, image()] },
