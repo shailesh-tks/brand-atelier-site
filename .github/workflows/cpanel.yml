@@ -1,0 +1,58 @@
+name: Deploy to GoDaddy cPanel
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: cpanel
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      # No PAGES_BASE_PATH here: cPanel serves the site from the document
+      # root, so assets are referenced from / rather than /<repo>.
+      - name: Build static export
+        env:
+          STATIC_EXPORT: "1"
+          NEXT_PUBLIC_SITE_URL: https://thebrandatelier.co.in
+        run: npm run build
+
+      # Until the FTP secrets exist this workflow builds and stops, rather
+      # than failing and mailing you about it on every push.
+      - name: Are the cPanel secrets set?
+        id: creds
+        run: |
+          if [ -n "${{ secrets.CPANEL_FTP_HOST }}" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::cPanel FTP secrets not set — built but not deployed."
+          fi
+
+      - name: Publish to cPanel over FTPS
+        if: steps.creds.outputs.ready == 'true'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.CPANEL_FTP_HOST }}
+          username: ${{ secrets.CPANEL_FTP_USER }}
+          password: ${{ secrets.CPANEL_FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./out/
+          server-dir: ${{ secrets.CPANEL_FTP_DIR }}
+          # Only changed files are transferred; the manifest lives on the server.
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
