@@ -1,0 +1,47 @@
+name: Build static export
+
+on:
+  push:
+    branches: [main]
+    # Without this the commit below would retrigger this workflow forever.
+    paths-ignore: ["out/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: static-export
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      # Built here, where memory is not the constraint it is on the host.
+      # No PAGES_BASE_PATH: the app serves this from its document root.
+      - name: Build
+        env:
+          STATIC_EXPORT: "1"
+          NEXT_TELEMETRY_DISABLED: "1"
+          NEXT_PUBLIC_SITE_URL: https://thebrandatelier.co.in
+        run: npm run build
+
+      - name: Commit the export if it changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f out
+          if git diff --cached --quiet; then
+            echo "Export unchanged — nothing to commit."
+          else
+            git commit -m "Build static export [skip ci]"
+            git push
+          fi
