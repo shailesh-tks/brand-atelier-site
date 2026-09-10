@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bodoni_Moda, Jost } from "next/font/google";
 import { site } from "@/lib/site";
+import Masthead from "@/components/Masthead";
 import "./globals.css";
 
 const bodoni = Bodoni_Moda({
@@ -68,6 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${bodoni.variable} ${jost.variable}`}>
       <body>
+        <Masthead />
         {children}
         <script
           type="application/ld+json"

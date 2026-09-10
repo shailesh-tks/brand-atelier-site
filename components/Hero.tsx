@@ -3,7 +3,6 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import HeroStill from "./HeroStill";
-import { asset } from "@/lib/site";
 
 /** three.js lives entirely behind this import and nowhere else. */
 const PointField = dynamic(() => import("./PointField"), { ssr: false });
@@ -36,14 +35,6 @@ export default function Hero() {
     <section className="hero" aria-labelledby="hero-title">
       {scene === "gl" && <PointField />}
       {scene === "still" && <HeroStill />}
-
-      {/* The real AB monogram, keyed out of the supplied artwork. The
-          wordmark stays live text: it matches the logo's face closely, stays
-          crisp at any size, and is selectable and readable to a screen reader. */}
-      <p className="masthead">
-        <img className="masthead__mark" src={asset("/logo-mark.png")} width={240} height={163} alt="" />
-        <span className="masthead__word">Brand Atelier</span>
-      </p>
 
       <div className="hero__inner">
         <p className="hero__eyebrow">Discover Your Position</p>

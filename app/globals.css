@@ -655,32 +655,50 @@ html.lenis, html.lenis body { height: auto; }
 }
 
 /* ── Masthead ───────────────────────────────────────────────────────
-   Type-set stand-in for the AB lockup until the vector lands. Metrics
-   follow the logo: high-contrast serif monogram over a light geometric
-   sans at wide tracking. */
+   Fixed, so the identity stays with the reader for the whole scroll.
+   Both marks are the supplied artwork, keyed out of their black ground. */
 .masthead {
-  position: absolute;
-  top: clamp(24px, 5vh, 52px);
+  position: fixed;
+  top: clamp(20px, 3.4vh, 40px);
   left: clamp(24px, 6vw, 88px);
+  z-index: 50;
   margin: 0;
   display: flex;
-  align-items: baseline;
-  gap: 14px;
+  align-items: center;
+  gap: clamp(10px, 1.4vw, 18px);
+  pointer-events: none;
   animation: fade-up 600ms var(--ease-out) backwards;
   animation-delay: 300ms;
 }
 .masthead__mark {
   display: block;
-  height: clamp(20px, 2.2vw, 26px);
+  height: clamp(19px, 2.1vw, 25px);
   width: auto;
 }
 .masthead__word {
-  font-size: 0.625rem;
-  font-weight: 400;
-  letter-spacing: 0.34em;
-  text-transform: uppercase;
-  color: var(--cool-mid);
+  display: block;
+  height: clamp(7px, 0.78vw, 9px);
+  width: auto;
+  opacity: 0.78;
 }
+/* A fixed mark over scrolling text needs separation or the two collide.
+   A soft scrim from the ground colour keeps the lockup legible without
+   putting a bar across the top of a page that shouldn't have one. */
+.masthead::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: clamp(88px, 13vh, 132px);
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    var(--ground) 0%,
+    color-mix(in srgb, var(--ground) 72%, transparent) 46%,
+    transparent 100%
+  );
+}
+
 @media (prefers-reduced-motion: reduce) { .masthead { animation: none; } }
 
 /* ── S2 · The photograph ────────────────────────────────────────── */
