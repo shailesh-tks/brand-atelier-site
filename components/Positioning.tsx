@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { asset } from "@/lib/site";
 
 const HELPS = [
   ["Stand apart", "in a crowded market."],
@@ -22,6 +23,8 @@ export default function Positioning() {
         <span>
           <p className="label">What is brand positioning</p>
 
+          <div className="positioning__grid">
+            <div className="positioning__text">
           <h2 className="positioning__lead" id="pos-title">
             Brand positioning is the space your brand owns in the mind of your customer.
           </h2>
@@ -45,6 +48,31 @@ export default function Positioning() {
               </li>
             ))}
           </ul>
+            </div>
+
+            {/* One item lifted out of a case of identical ones — the same
+                argument the hero and the chess frame make. It sits inside the
+                section's single block fade, so it adds no motion of its own. */}
+            <figure className="positioning__media">
+              <picture>
+                <source
+                  type="image/webp"
+                  sizes="(min-width: 1080px) 380px, 88vw"
+                  srcSet={`${asset("/work/selection-500.webp")} 500w, ${asset("/work/selection-760.webp")} 760w, ${asset("/work/selection-1024.webp")} 1024w`}
+                />
+                <img
+                  src={asset("/work/selection-760.jpg")}
+                  srcSet={`${asset("/work/selection-500.jpg")} 500w, ${asset("/work/selection-760.jpg")} 760w, ${asset("/work/selection-1024.jpg")} 1024w`}
+                  sizes="(min-width: 1080px) 380px, 88vw"
+                  width={1024}
+                  height={1536}
+                  loading="lazy"
+                  decoding="async"
+                  alt="A single rose lifted by a claw from a case packed with identical bottles."
+                />
+              </picture>
+            </figure>
+          </div>
         </span>
       </div>
     </section>

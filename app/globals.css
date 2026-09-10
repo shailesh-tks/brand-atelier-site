@@ -444,9 +444,7 @@ html.lenis, html.lenis body { height: auto; }
   gap: 20px;
   max-width: 68ch;
 }
-@media (min-width: 860px) {
-  .positioning__cols { grid-template-columns: 1fr 1fr; gap: 40px; max-width: none; }
-}
+/* Single column now: the image occupies the space the second column used. */
 .positioning__cols p { margin: 0; max-width: 46ch; }
 
 .positioning__kicker {
@@ -682,13 +680,14 @@ html.lenis, html.lenis body { height: auto; }
   content: "";
   position: fixed;
   inset: 0 0 auto 0;
-  height: clamp(104px, 14vh, 148px);
+  height: clamp(132px, 17vh, 184px);
   z-index: -1;
   pointer-events: none;
   background: linear-gradient(
     to bottom,
     var(--ground) 0%,
-    color-mix(in srgb, var(--ground) 72%, transparent) 46%,
+    var(--ground) 54%,
+    color-mix(in srgb, var(--ground) 58%, transparent) 78%,
     transparent 100%
   );
 }
@@ -732,4 +731,27 @@ html.lenis, html.lenis body { height: auto; }
       to   { transform: translateY(6%); }
     }
   }
+}
+
+/* ── S3 · layout with the selection image ───────────────────────── */
+.positioning__grid {
+  display: grid;
+  gap: clamp(48px, 7vw, 72px);
+}
+@media (min-width: 1080px) {
+  .positioning__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+    gap: clamp(56px, 6vw, 96px);
+    align-items: start;
+  }
+}
+.positioning__media { margin: 0; }
+.positioning__media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 420px;
+}
+@media (min-width: 1080px) {
+  .positioning__media img { max-width: none; }
 }
